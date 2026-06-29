@@ -1,0 +1,16 @@
+/* App-level styles */
+
+.footer {
+  text-align: center;
+  padding: 32px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.footer-sub {
+  font-size: 11px;
+  margin-top: 4px;
+  opacity: 0.6;
+}

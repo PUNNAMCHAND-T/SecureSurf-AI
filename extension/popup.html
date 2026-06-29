@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=400, initial-scale=1.0">
+  <title>SecureSurf AI</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo-section">
+        <div class="logo-icon">🛡️</div>
+        <div>
+          <h1 class="logo-text">SecureSurf AI</h1>
+          <p class="logo-subtitle">Phishing Detection</p>
+        </div>
+      </div>
+      <div class="status-dot" id="statusDot" title="API Status"></div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="scanner" id="tabScanner">
+        <span class="tab-icon">🔍</span> Scanner
+      </button>
+      <button class="nav-tab" data-tab="history" id="tabHistory">
+        <span class="tab-icon">📋</span> History
+      </button>
+      <button class="nav-tab" data-tab="settings" id="tabSettings">
+        <span class="tab-icon">⚙️</span> Settings
+      </button>
+    </nav>
+
+    <!-- Scanner Tab -->
+    <div class="tab-content active" id="scannerTab">
+      <!-- Current URL -->
+      <div class="current-url" id="currentUrlSection">
+        <label class="input-label">Current Page URL</label>
+        <div class="url-display" id="currentUrl">Loading...</div>
+      </div>
+
+      <!-- Scan Button -->
+      <button class="scan-btn" id="scanBtn">
+        <span class="scan-icon">🔍</span>
+        Scan This Page
+      </button>
+
+      <!-- Results Section -->
+      <div class="results-section" id="resultsSection" style="display: none;">
+        <!-- Status Card -->
+        <div class="status-card" id="statusCard">
+          <div class="status-icon" id="statusIcon">🛡️</div>
+          <div class="status-text" id="statusText">Safe Website</div>
+          <div class="status-confidence" id="statusConfidence">Confidence: 0%</div>
+        </div>
+
+        <!-- Risk Level -->
+        <div class="risk-bar-container">
+          <div class="risk-label">Risk Level</div>
+          <div class="risk-bar">
+            <div class="risk-fill" id="riskFill"></div>
+          </div>
+          <div class="risk-text" id="riskText">Safe</div>
+        </div>
+
+        <!-- SHAP Explanation -->
+        <div class="explanation-section" id="explanationSection">
+          <h3 class="section-title">🧠 Why this classification?</h3>
+          <div class="feature-list" id="featureList"></div>
+        </div>
+
+        <!-- Report Button -->
+        <div class="action-buttons">
+          <button class="report-btn" id="reportFalsePositive" title="Report as incorrectly classified">
+            🚩 Report
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-state" id="loadingState" style="display: none;">
+        <div class="spinner"></div>
+        <p>Analyzing URL...</p>
+      </div>
+
+      <!-- Error State -->
+      <div class="error-state" id="errorState" style="display: none;">
+        <div class="error-icon">❌</div>
+        <p class="error-text" id="errorText">Error scanning URL</p>
+        <button class="retry-btn" id="retryBtn">Retry</button>
+      </div>
+    </div>
+
+    <!-- History Tab -->
+    <div class="tab-content" id="historyTab" style="display: none;">
+      <div class="history-header">
+        <h3 class="section-title">Recent Scans</h3>
+        <button class="clear-btn" id="clearHistoryBtn">Clear All</button>
+      </div>
+      <div class="history-list" id="historyList">
+        <p class="empty-state">No scan history yet</p>
+      </div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div class="tab-content" id="settingsTab" style="display: none;">
+      <h3 class="section-title">Extension Settings</h3>
+      
+      <div class="setting-item">
+        <label class="setting-label">Auto-scan pages</label>
+        <label class="toggle">
+          <input type="checkbox" id="autoScanToggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      
+      <div class="setting-item">
+        <label class="setting-label">Show notifications</label>
+        <label class="toggle">
+          <input type="checkbox" id="notificationsToggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      
+      <div class="setting-item">
+        <label class="setting-label">API URL</label>
+        <input type="text" class="setting-input" id="apiUrlInput" 
+               value="http://localhost:8000" placeholder="API base URL">
+      </div>
+      
+      <button class="save-settings-btn" id="saveSettingsBtn">Save Settings</button>
+      
+      <div class="about-section">
+        <p class="about-text">SecureSurf AI v1.0.0</p>
+        <p class="about-text">AI-Powered Phishing Detection</p>
+        <p class="about-text">Built with ❤️ for safer browsing</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+# ========================
+# Python
+# ========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.Python
+env/
+venv/
+.venv/
+pip-selfcheck.json
+*.log
+
+# ========================
+# Environment & Secrets
+# ========================
+.env
+.env.local
+.env.*.local
+*.env
+
+# ========================
+# Node.js / Frontend
+# ========================
+node_modules/
+frontend/dist/
+frontend/build/
+frontend/.vite/
+.npm
+
+# ========================
+# IDEs & Editors
+# ========================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+# ========================
+# Datasets (large files)
+# ========================
+datasets/feature_matrix.csv
+
+# ========================
+# SQLite Database
+# ========================
+backend/*.db
+backend/*.db-journal
+backend/*.db-shm
+backend/*.db-wal
+
+# ========================
+# Logs
+# ========================
+*.log
+secursurf.log
+
+# ========================
+# OS files
+# ========================
+.DS_Store
+desktop.ini

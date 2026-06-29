@@ -1,0 +1,51 @@
+{
+  "best_model_name": "Logistic Regression",
+  "metrics": {
+    "accuracy": 0.997,
+    "precision": 0.996,
+    "recall": 0.998,
+    "f1_score": 0.997,
+    "roc_auc": 0.9999,
+    "cv_f1_mean": 0.9981,
+    "cv_f1_std": 0.0007
+  },
+  "feature_count": 36,
+  "all_model_metrics": {
+    "Logistic Regression": {
+      "accuracy": 0.997,
+      "precision": 0.996,
+      "recall": 0.998,
+      "f1_score": 0.997,
+      "roc_auc": 0.9999,
+      "cv_f1_mean": 0.9981,
+      "cv_f1_std": 0.0007
+    },
+    "Random Forest": {
+      "accuracy": 0.997,
+      "precision": 0.996,
+      "recall": 0.998,
+      "f1_score": 0.997,
+      "roc_auc": 1.0,
+      "cv_f1_mean": 0.998,
+      "cv_f1_std": 0.0005
+    },
+    "SVM": {
+      "accuracy": 0.997,
+      "precision": 0.996,
+      "recall": 0.998,
+      "f1_score": 0.997,
+      "roc_auc": 1.0,
+      "cv_f1_mean": 0.9976,
+      "cv_f1_std": 0.0005
+    },
+    "XGBoost": {
+      "accuracy": 0.9965,
+      "precision": 0.996,
+      "recall": 0.997,
+      "f1_score": 0.9965,
+      "roc_auc": 1.0,
+      "cv_f1_mean": 0.9973,
+      "cv_f1_std": 0.0005
+    }
+  }
+}
