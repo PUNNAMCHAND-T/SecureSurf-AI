@@ -1,443 +1,235 @@
-# 🛡️ SecureSurf AI — AI-Powered Phishing Website Detection System
+# SecureSurf AI — AI-Powered Phishing Website Detection System
 
 <div align="center">
 
-![SecureSurf AI](https://img.shields.io/badge/SecureSurf-AI-667eea?style=for-the-badge&logo=shield&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![React](https://img.shields.io/badge/React-19+-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.104-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.3-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
-![Chrome](https://img.shields.io/badge/Chrome-Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)
+![XGBoost](https://img.shields.io/badge/XGBoost-ML-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
+![SHAP](https://img.shields.io/badge/SHAP-Explainable_AI-764ABC?style=for-the-badge)
+![Chrome](https://img.shields.io/badge/Chrome-Extension_MV3-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)
 
-**A full-stack AI-powered phishing website detection system with explainable AI,
-real-time URL scanning, browser extension, and analytics dashboard.**
-
-[🚀 Live Demo](#deployment) · [📖 Documentation](#documentation) · [🧪 API Docs](#api-documentation)
+A full-stack phishing detection platform that uses machine learning and explainable AI to classify URLs in real time — with a React dashboard, FastAPI backend, and Chrome browser extension.
 
 </div>
 
 ---
 
-## 📋 Table of Contents
+## Overview
 
-- [Overview](#overview)
-- [Architecture](#architecture)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Setup Instructions](#setup-instructions)
-- [Machine Learning Pipeline](#machine-learning-pipeline)
-- [API Documentation](#api-documentation)
-- [Frontend Dashboard](#frontend-dashboard)
-- [Chrome Extension](#chrome-extension)
-- [Security Features](#security-features)
-- [Deployment](#deployment)
-- [Future Enhancements](#future-enhancements)
-- [License](#license)
+SecureSurf AI is an end-to-end system that detects phishing websites by extracting **36 URL-based features** and classifying them using trained ML models. Each prediction comes with a **SHAP-based explanation** showing exactly which features drove the decision.
+
+**Key highlights:**
+- 4 ML models trained and evaluated (Logistic Regression, Random Forest, XGBoost, SVM)
+- Best model achieves **99.7% accuracy** and **99.7% F1 score** with 5-fold stratified cross-validation
+- Explainable AI via SHAP TreeExplainer — per-prediction feature importance
+- Real-time scanning through REST API, web dashboard, and Chrome extension
+- Domain blacklist/whitelist, rate limiting, and input sanitization for security
 
 ---
 
-## 🔍 Overview
-
-SecureSurf AI is a comprehensive phishing website detection platform that combines:
-
-- **Machine Learning** (4 models: Logistic Regression, Random Forest, XGBoost, SVM)
-- **Explainable AI** (SHAP-based feature importance explanations + interactive bar charts)
-- **REST API** (FastAPI with rate limiting, blacklisting, whitelisting, and input validation)
-- **Web Dashboard** (React.js with real-time analytics, charts, and SHAP visualizations)
-- **Browser Extension** (Chrome Manifest V3 with auto-scan, notifications, and warning banners)
-
-The system extracts **30+ URL-based features** and uses trained ML models to classify URLs as **Safe** or **Phishing** with confidence scores and human-readable explanations.
-
----
-
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                      SecureSurf AI Architecture                      │
+│                      SecureSurf AI Architecture                     │
 ├──────────────┬───────────────┬──────────────┬───────────────────────┤
-│              │               │              │                       │
 │  Chrome      │   React.js    │   FastAPI    │   ML Pipeline         │
 │  Extension   │   Dashboard   │   Backend    │                       │
 │              │               │              │                       │
-│  ┌────────┐  │  ┌─────────┐  │  ┌────────┐  │  ┌────────────────┐  │
-│  │Manifest│  │  │  Home   │  │  │/predict│  │  │Feature Extract.│  │
-│  │  V3    │  │  │ Scanner │  │  │/history│  │  │  30+ Features  │  │
-│  │        │  │  │ History │  │  │/report │  │  │                │  │
-│  │Auto    │  │  │Analytics│  │  │/stats  │  │  │  4 ML Models   │  │
-│  │Scan    │──│──│         │──│──│/black  │──│──│  LR/RF/XGB/SVM │  │
-│  │        │  │  │Recharts │  │  │/white  │  │  │                │  │
-│  │Notify  │  │  │SHAP Bar │  │  │SQLite  │  │  │ SHAP Explainer │  │
-│  │Banners │  │  │Charts   │  │  │Rate    │  │  │  TreeExplainer │  │
-│  └────────┘  │  └─────────┘  │  Limit   │  │  └────────────────┘  │
-│              │               └──────────┘  │                       │
+│  Manifest V3 │  Home         │  /predict    │  Feature Extraction   │
+│  Auto-Scan   │  Scanner      │  /history    │  36 URL Features      │
+│  Notifications│ History      │  /stats      │  4 ML Models          │
+│  Warning     │  Analytics    │  /blacklist  │  SHAP Explainer       │
+│  Banners     │  SHAP Charts  │  /whitelist  │  StandardScaler       │
 └──────────────┴───────────────┴──────────────┴───────────────────────┘
 ```
 
-### Data Flow
-
+**Data Flow:**
 ```
-URL Input → Blacklist/Whitelist Check → Feature Extraction (30+) → StandardScaler
-    ↓                                                                      ↓
-SHAP Explanation ← Feature Importance ← ML Model Prediction (Safe/Phishing)
-    ↓                                                                      ↓
-API Response (JSON) → Frontend (SHAP bar chart) / Extension Popup / Notification
-    ↓
-SQLite Database (Scan History, Reports, Blacklist/Whitelist)
+URL → Blacklist/Whitelist Check → Feature Extraction (36) → StandardScaler
+  → ML Prediction → SHAP Explanation → JSON Response → Dashboard / Extension
+  → SQLite (Scan History, Reports)
 ```
 
 ---
 
-## ✨ Features
-
-### 🤖 Machine Learning
-| Feature | Description |
-|---------|-------------|
-| 4 ML Models | Logistic Regression, Random Forest, XGBoost, SVM |
-| 30+ URL Features | Length, entropy, subdomains, suspicious keywords, TLDs, IP detection |
-| Auto Model Selection | Selects best model based on F1 score |
-| Cross Validation | 5-fold stratified cross-validation |
-| Realistic Training Data | Includes edge-case URLs for realistic ~92-97% accuracy metrics |
-
-### 🧠 Explainable AI
-| Feature | Description |
-|---------|-------------|
-| SHAP Integration | TreeExplainer for tree-based models |
-| Feature Importance | Top features driving each prediction |
-| SHAP Bar Chart | Interactive horizontal bar chart showing each feature's impact |
-| Heuristic Fallback | Domain-knowledge explanations when SHAP unavailable |
-
-### 🔐 Security
-| Feature | Description |
-|---------|-------------|
-| Domain Blacklist | Known phishing domains blocked instantly (GET/POST /blacklist) |
-| Domain Whitelist | Trusted domains fast-tracked (GET/POST /whitelist) |
-| Rate Limiting | 30 requests/minute per IP |
-| Input Sanitization | XSS prevention, URL validation (Pydantic v2) |
-
-### 📊 Analytics
-| Feature | Description |
-|---------|-------------|
-| Scan Statistics | Total scans, safe/phishing breakdown |
-| Risk Distribution | Safe/Low/Medium/High/Critical breakdown |
-| Daily Trends | 7-day scan activity line chart |
-| Model Comparison | Side-by-side model performance metrics |
-| Radar Chart | Best model performance across all metrics |
-
----
-
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technologies |
 |-------|-------------|
-| **ML/AI** | Python 3.11+, Scikit-Learn, XGBoost, SHAP, NumPy, Pandas |
+| **ML/AI** | Python, Scikit-Learn, XGBoost, SHAP, NumPy, Pandas |
 | **Backend** | FastAPI, Uvicorn, SQLite, Pydantic v2, Joblib |
-| **Frontend** | React 19, Vite, React Router, Recharts, Framer Motion, Lucide Icons |
+| **Frontend** | React 19, Vite, React Router, Recharts, Framer Motion |
 | **Extension** | Chrome Manifest V3, Service Workers, Chrome Storage/Notifications APIs |
-| **Deployment** | Render (Backend), Vercel (Frontend), Chrome Web Store (Extension) |
 
 ---
 
-## 📁 Project Structure
+## Model Performance
 
-```
-SecureSurf-AI/
-├── backend/
-│   └── main.py                    # FastAPI app (predict, history, report, stats, blacklist, whitelist)
-├── frontend/
-│   ├── .env.local                 # VITE_API_URL config
-│   └── src/
-│       ├── components/
-│       │   ├── Navbar.jsx         # Responsive navigation
-│       │   └── Navbar.css
-│       ├── pages/
-│       │   ├── Home.jsx           # Landing page
-│       │   ├── Scanner.jsx        # URL scanner + SHAP bar chart
-│       │   ├── History.jsx        # Paginated scan history table
-│       │   └── Analytics.jsx      # KPI cards + charts + model metrics
-│       └── services/
-│           └── api.js             # API client
-├── extension/
-│   ├── manifest.json              # Chrome Manifest V3
-│   ├── background.js              # Service worker (auto-scan + notifications)
-│   ├── content.js                 # Page warning banners
-│   ├── popup.html / popup.js / popup.css
-│   └── icons/
-│       ├── icon16.png             # Generated PNG icons
-│       ├── icon32.png
-│       ├── icon48.png
-│       └── icon128.png
-├── model/
-│   ├── feature_engineering.py     # 30+ URL feature extraction
-│   ├── train_model.py             # 4-model training pipeline
-│   ├── shap_explainer.py          # SHAP explainability module
-│   └── saved_models/              # best_model.joblib, scaler.joblib, metadata
-├── datasets/
-│   ├── phishing_urls.csv          # Training dataset
-│   └── feature_matrix.csv         # Extracted features
-├── docs/plots/                    # Generated visualizations
-├── generate_icons.py              # Extension icon generator (stdlib only)
-├── setup.bat                      # First-time setup script
-├── start_backend.bat              # Launch FastAPI backend
-├── start_frontend.bat             # Launch React dev server
-├── requirements.txt               # Python dependencies
-├── render.yaml                    # Render deployment config
-├── vercel.json                    # Vercel deployment config
-└── README.md
-```
+All models were trained on 36 engineered URL features and evaluated with 5-fold stratified cross-validation.
+
+| Model | Accuracy | Precision | Recall | F1 Score | ROC-AUC | CV F1 Mean |
+|-------|----------|-----------|--------|----------|---------|------------|
+| **Logistic Regression** ⭐ | 99.7% | 99.6% | 99.8% | 99.7% | 99.99% | 99.81% |
+| Random Forest | 99.7% | 99.6% | 99.8% | 99.7% | 100% | 99.80% |
+| SVM | 99.7% | 99.6% | 99.8% | 99.7% | 100% | 99.76% |
+| XGBoost | 99.65% | 99.6% | 99.7% | 99.65% | 100% | 99.73% |
+
+> Best model is selected automatically based on F1 score.
 
 ---
 
-## 🚀 Setup Instructions
-
-### Prerequisites
-
-- **Python 3.11+** with pip
-- **Node.js 18+** with npm
-- **Google Chrome** (for extension)
-
-### Quick Start (Windows)
-
-```bash
-# 1. Run the setup script (installs dependencies + generates icons)
-setup.bat
-
-# 2. Train the ML model
-cd model && python train_model.py && cd ..
-
-# 3. Start the backend (in one terminal)
-start_backend.bat
-
-# 4. Start the frontend (in another terminal)
-start_frontend.bat
-```
-
-### Manual Setup
-
-```bash
-# Install Python dependencies
-pip install -r requirements.txt
-
-# Generate extension icons
-python generate_icons.py
-
-# Train the ML model
-cd model
-python train_model.py
-cd ..
-
-# Start FastAPI backend
-cd backend
-python main.py
-# → API running at http://localhost:8000
-# → API Docs at http://localhost:8000/docs
-
-# Install and start frontend
-cd frontend
-npm install
-npm run dev
-# → Dashboard at http://localhost:5173
-```
-
-### Load the Chrome Extension
-
-1. Open Chrome → `chrome://extensions/`
-2. Enable **Developer Mode** (top right toggle)
-3. Click **Load unpacked**
-4. Select the `extension/` directory
-5. Pin **SecureSurf AI** to your toolbar
-
-> The extension connects to `http://localhost:8000` by default. You can change this in the extension Settings tab.
-
----
-
-## 🤖 Machine Learning Pipeline
-
-### Feature Engineering (30+ Features)
+## Feature Engineering (36 Features)
 
 | Category | Features |
 |----------|----------|
-| **Length** | URL length, domain length, path length, query length |
-| **Character** | Dots, hyphens, underscores, digits, special chars, @ signs |
-| **Ratios** | Digit-letter ratio, special char ratio |
-| **Domain** | IP address presence, HTTPS usage, subdomain count, www prefix |
-| **Suspicious** | Keyword count, suspicious TLD, URL shortener detection |
-| **Path** | Path depth, double-slash redirect |
+| **Length-based** | URL length, domain length, path length, query length |
+| **Character counts** | Dots, hyphens, underscores, digits, special chars, `@` signs |
+| **Ratios** | Digit-to-letter ratio, special character ratio |
+| **Domain analysis** | IP address presence, HTTPS usage, subdomain count, www prefix |
+| **Suspicious signals** | Keyword count, suspicious TLD, URL shortener detection |
+| **Path analysis** | Path depth, double-slash redirect |
 | **Entropy** | URL entropy, domain entropy (Shannon) |
-| **Other** | Domain age, non-standard port, fragment presence |
-
-### Models Trained
-
-| Model | Description |
-|-------|-------------|
-| **Logistic Regression** | Linear classifier with L2 regularization, balanced class weights |
-| **Random Forest** | Ensemble of 200 decision trees, balanced class weights |
-| **XGBoost** | Gradient boosting with 200 estimators, log-loss evaluation |
-| **SVM** | RBF kernel with probability calibration, balanced class weights |
-
-### Evaluation Metrics
-
-Each model is evaluated using:
-- **Accuracy** — Overall correctness
-- **Precision** — Phishing prediction accuracy  
-- **Recall** — Phishing detection rate
-- **F1 Score** — Harmonic mean of precision and recall
-- **ROC-AUC** — Area under ROC curve
-- **5-Fold CV** — Cross-validated F1 score
+| **Other** | Domain age indicator, non-standard port, fragment presence |
 
 ---
 
-## 📡 API Documentation
+## Explainable AI (SHAP)
 
-### Base URL: `http://localhost:8000`
-### Interactive Docs: `http://localhost:8000/docs`
+Every prediction includes a human-readable explanation powered by SHAP:
 
-### Endpoints
+- **SHAP TreeExplainer** for tree-based models (Random Forest, XGBoost)
+- **Per-prediction feature importance** — shows which features contributed most
+- **Interactive bar chart** on the dashboard visualizing feature impact
+- **Heuristic fallback** — domain-knowledge explanations when SHAP is unavailable (e.g., for Logistic Regression)
+
+---
+
+## API Endpoints
+
+Base URL: `http://localhost:8000` &nbsp;|&nbsp; Interactive Docs: `/docs` (Swagger UI)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/predict` | Scan a URL for phishing |
-| `GET` | `/history` | Get scan history (filterable, paginated) |
-| `POST` | `/report` | Report a URL as phishing/false positive |
-| `GET` | `/stats` | Get aggregated analytics statistics |
-| `GET` | `/model-info` | Get trained model metadata & metrics |
-| `GET` | `/blacklist` | List all blacklisted domains |
-| `POST` | `/blacklist` | Add a domain to the blacklist |
-| `GET` | `/whitelist` | List all trusted/whitelisted domains |
-| `POST` | `/whitelist` | Add a domain to the whitelist |
-| `GET` | `/health` | API health check |
+| `POST` | `/predict` | Classify a URL as safe or phishing |
+| `GET` | `/history` | Paginated scan history with filters |
+| `POST` | `/report` | Report a URL as phishing or false positive |
+| `GET` | `/stats` | Aggregated analytics and statistics |
+| `GET` | `/model-info` | Trained model metadata and metrics |
+| `GET/POST` | `/blacklist` | View or add blacklisted domains |
+| `GET/POST` | `/whitelist` | View or add whitelisted domains |
+| `GET` | `/health` | Health check |
 
-#### `POST /predict` — Example
+**Example — `POST /predict`**
 
-**Request:**
 ```json
+// Request
 { "url": "http://suspicious-site.tk/login" }
-```
 
-**Response:**
-```json
+// Response
 {
-  "url": "http://suspicious-site.tk/login",
   "prediction": "phishing",
   "is_phishing": true,
   "confidence": 94.5,
-  "phishing_probability": 94.5,
-  "safe_probability": 5.5,
   "risk_level": "critical",
   "shap_explanation": {
     "method": "shap",
     "top_features": [
-      { "feature": "has_suspicious_tld", "shap_value": 0.234, "impact": "increases_phishing", "abs_impact": 0.234 }
+      { "feature": "has_suspicious_tld", "shap_value": 0.234, "impact": "increases_phishing" }
     ]
-  },
-  "scan_id": 42,
-  "source": "model"
+  }
 }
 ```
 
 ---
 
-## 🖥️ Frontend Dashboard
+## Frontend Dashboard
 
-| Page | URL | Description |
-|------|-----|-------------|
-| **Home** | `/` | Landing page with features, architecture flow, and statistics |
-| **URL Scanner** | `/scanner` | URL input, real-time scanning, SHAP bar chart, confidence breakdown |
-| **Scan History** | `/history` | Paginated table with risk-level and prediction filters |
-| **Analytics** | `/analytics` | KPI cards, pie/bar/line charts, radar chart, model comparison table |
+Built with React 19 + Vite, featuring 4 pages:
 
----
-
-## 🔌 Chrome Extension
-
-### Features
-- 🔍 **Auto-scan** — Automatically scans every page you visit
-- 🔔 **Notifications** — Browser alerts for medium/high/critical risk URLs
-- ⚠️ **Warning Banners** — Red/orange banners injected into dangerous pages
-- 📋 **Local History** — Last 100 scans stored in `chrome.storage.local`
-- ⚙️ **Settings** — Configurable auto-scan, notifications, custom API URL
-- 🚩 **Reporting** — Report URLs as phishing or false positive
-
-### Risk Display
-| Status | Meaning |
-|--------|---------| 
-| ✅ Safe | Website is legitimate |
-| ⚠️ Suspicious | Moderate risk, proceed with caution |
-| 🚨 Phishing | High-confidence phishing detection |
+| Page | Description |
+|------|-------------|
+| **Home** | Landing page with feature highlights and architecture overview |
+| **Scanner** | URL input with real-time classification, confidence meter, and SHAP bar chart |
+| **History** | Paginated scan history table with risk-level and prediction filters |
+| **Analytics** | KPI cards, pie/bar/line charts, radar chart, and model comparison table |
 
 ---
 
-## 🔐 Security Features
+## Chrome Extension (Manifest V3)
 
-1. **Domain Blacklist** — Known phishing domains return instant `critical` results
-2. **Domain Whitelist** — Trusted domains (Google, GitHub, etc.) return instant `safe` results
-3. **Rate Limiting** — 30 requests per minute per IP address
-4. **Pydantic v2 Validation** — `@field_validator` for URL format and XSS prevention
-5. **XSS Prevention** — Blocks `<script>`, `javascript:`, `data:` URL schemes
-6. **CORS** — Configurable Cross-Origin Resource Sharing
-7. **Input Sanitization** — URL length limits and format validation
-
----
-
-## 🌐 Deployment
-
-### Backend → Render
-
-1. Push code to GitHub
-2. Connect repo to [Render](https://render.com)
-3. Render will use `render.yaml` configuration automatically
-4. Set environment variable: `PYTHON_VERSION=3.11.6`
-
-### Frontend → Vercel
-
-1. Push code to GitHub
-2. Connect repo to [Vercel](https://vercel.com)
-3. Set **Build Command**: `cd frontend && npm run build`
-4. Set **Output Directory**: `frontend/dist`
-5. Add environment variable: `VITE_API_URL=https://your-api.onrender.com`
-
-### Chrome Extension → Chrome Web Store
-
-1. Icons are already in PNG format in `extension/icons/`
-2. Update `manifest.json` host_permissions with your production API URL
-3. Create ZIP: `Compress-Archive -Path extension -DestinationPath SecureSurf-extension.zip`
-4. Upload to [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole)
+- **Auto-scan** — scans every page visited automatically
+- **Notifications** — browser alerts for medium, high, and critical risk URLs
+- **Warning banners** — injects red/orange banners into dangerous pages
+- **Local history** — last 100 scans stored in `chrome.storage.local`
+- **Configurable** — toggle auto-scan, notifications, and set custom API URL
+- **Reporting** — report URLs as phishing or false positive
 
 ---
 
-## 🔮 Future Enhancements
+## Security
 
-- [ ] Deep learning model (LSTM/Transformer for URL sequence analysis)
-- [ ] Real-time domain WHOIS lookup integration
-- [ ] Screenshot-based visual similarity detection
-- [ ] Email phishing detection (beyond URLs)
-- [ ] User authentication and personalized dashboards
-- [ ] Browser extension for Firefox and Edge
-- [ ] Automated retraining pipeline with new reported URLs
-- [ ] Integration with VirusTotal and Google Safe Browsing API
-
----
-
-## 👨‍💻 Author
-
-**B.Tech Final Year Project**
-
-Built as part of the Final Year B.Tech Computer Science project, demonstrating:
-- Machine Learning & Explainable AI (XAI)
-- Full-Stack Web Development (React + FastAPI)
-- Browser Extension Development (Chrome MV3)
-- Cybersecurity & Threat Detection
+| Feature | Implementation |
+|---------|---------------|
+| Domain Blacklist | Known phishing domains return instant `critical` results |
+| Domain Whitelist | Trusted domains return instant `safe` results |
+| Rate Limiting | 30 requests/minute per IP |
+| Input Validation | Pydantic v2 validators for URL format and XSS prevention |
+| XSS Prevention | Blocks `<script>`, `javascript:`, `data:` URL schemes |
+| CORS | Configurable cross-origin resource sharing |
 
 ---
 
-## 📄 License
+## Project Structure
 
-This project is licensed under the MIT License.
+```
+SecureSurf-AI/
+├── backend/
+│   └── main.py                    # FastAPI application
+├── frontend/src/
+│   ├── components/                # Navbar
+│   ├── pages/                     # Home, Scanner, History, Analytics
+│   └── services/api.js            # API client
+├── extension/
+│   ├── manifest.json              # Chrome Manifest V3
+│   ├── background.js              # Service worker (auto-scan)
+│   ├── content.js                 # Warning banner injection
+│   └── popup.html/js/css          # Extension popup UI
+├── model/
+│   ├── feature_engineering.py     # 36-feature extraction
+│   ├── train_model.py             # Multi-model training pipeline
+│   ├── shap_explainer.py          # SHAP explainability module
+│   └── saved_models/              # Trained model artifacts
+├── datasets/                      # Training data and feature matrix
+├── proof/                         # Model performance plots and report
+└── requirements.txt
+```
 
 ---
 
-<div align="center">
-  <p>Built with ❤️ using Python, React, FastAPI & SHAP</p>
-  <p><strong>SecureSurf AI</strong> — Detect. Explain. Protect.</p>
-</div>
+## Getting Started
+
+**Prerequisites:** Python 3.11+, Node.js 18+, Google Chrome
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Train the ML models
+cd model && python train_model.py && cd ..
+
+# Start the backend (http://localhost:8000)
+cd backend && python main.py
+
+# Start the frontend (http://localhost:5173)
+cd frontend && npm install && npm run dev
+```
+
+To load the Chrome extension: open `chrome://extensions/`, enable Developer Mode, and load the `extension/` folder as an unpacked extension.
+
+---
+
+## License
+
+MIT License
